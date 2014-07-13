@@ -40,6 +40,8 @@
  */
 grammar Java;
 
+@lexer::members { public static final int COMMENTS = 1; }
+
 // starting point for parsing a java file
 compilationUnit
     :   packageDeclaration? importDeclaration* typeDeclaration* EOF
@@ -1011,10 +1013,14 @@ ELLIPSIS : '...';
 WS  :  [ \t\r\n\u000C]+ -> skip
     ;
 
+JAVADOC_COMMENT
+    :   '/**' .*? '*/' -> channel(COMMENTS)
+    ;    
+
 COMMENT
-    :   '/*' .*? '*/' -> skip
+    :   '/*' .*? '*/' -> channel(COMMENTS)
     ;
 
 LINE_COMMENT
-    :   '//' ~[\r\n]* -> skip
+    :   '//' ~[\r\n]* -> channel(COMMENTS)
     ;
